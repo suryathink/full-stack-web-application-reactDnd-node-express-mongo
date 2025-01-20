@@ -3,16 +3,14 @@ import http from "http";
 import log4js, { Configuration } from "log4js";
 import cors from "cors";
 import connectDatabase from "@src/config/db";
-// import log4jsConfig from "./config/log4js.config";
 import log4jsConfig from "@src/config/log4js.config";
-
-import { logRequests } from "./middlewares/requestLogger";
+import { logRequests } from "@src/middlewares/requestLogger";
+import { globalLimiterMiddleware } from "@src/middlewares/rateLimiter";
 import router from "./routes/route";
-import { globalLimiterMiddleware } from "./middlewares/rateLimiter";
 
 log4js.configure(log4jsConfig as Configuration);
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT;
 
 app.use(logRequests);
 app.use(express.json());
@@ -25,20 +23,6 @@ app.use(globalLimiterMiddleware);
 
 app.use(router);
 const server = http.createServer(app);
-
-export const io = new Server(server, {
-  serveClient: false,
-  path: "/ws",
-  cors: {
-    methods: ["GET", "POST"],
-    origin: "*",
-    credentials: true,
-  },
-});
-instrument(io, {
-  auth: false,
-});
-require("./controller/sockets")(io);
 
 const logger = log4js.getLogger();
 
