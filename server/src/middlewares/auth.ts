@@ -4,8 +4,9 @@ import blacklistTokenData from "../models/blacklist";
 
 // Define a type for the decoded user object
 interface DecodedToken {
-  userId: string;
+  _id: string;
   email: string;
+  name: string;
   // Add any other properties present in your JWT payload
 }
 
