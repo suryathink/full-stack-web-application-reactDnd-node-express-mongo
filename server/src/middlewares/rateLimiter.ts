@@ -24,9 +24,10 @@ export const authLimiterMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   if (typeof req.ip !== "string") {
-    return res.status(400).send({ message: "Invalid IP address" });
+    res.status(400).send({ message: "Invalid IP address" });
+    return;
   }
 
   try {
@@ -44,9 +45,10 @@ export const apiLimiterMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   if (typeof req.ip !== "string") {
-    return res.status(400).send({ message: "Invalid IP address" });
+    res.status(400).send({ message: "Invalid IP address" });
+    return;
   }
 
   try {

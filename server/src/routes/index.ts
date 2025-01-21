@@ -1,5 +1,5 @@
 import { Express, Request, Response } from "express";
-import { v1Apis } from "./v1";
+// import { v1Apis } from "./v1";
 
 // Health Check Route
 const healthCheck = (_req: Request, res: Response): void => {
@@ -13,5 +13,5 @@ export const routes = (app: Express): void => {
   app.get("/health", healthCheck);
 
   // Version 1 API routes
-  v1Apis(app);
+  //   v1Apis(app);
 };

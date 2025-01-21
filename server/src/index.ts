@@ -1,10 +1,10 @@
 import express from "express";
 import log4js, { Configuration } from "log4js";
 import cors from "cors";
-import connectDatabase from "@src/config/db";
-import log4jsConfig from "@src/config/log4js.config";
-import { logRequests } from "@src/middlewares/requestLogger";
-import { globalLimiterMiddleware } from "@src/middlewares/rateLimiter";
+import connectDatabase from "./config/db";
+import log4jsConfig from "./config/log4js.config";
+import { logRequests } from "./middlewares/requestLogger";
+import { globalLimiterMiddleware } from "./middlewares/rateLimiter";
 
 log4js.configure(log4jsConfig as Configuration);
 const app = express();
