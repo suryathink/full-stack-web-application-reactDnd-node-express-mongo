@@ -5,7 +5,7 @@ import connectDatabase from "./config/db";
 import log4jsConfig from "./config/log4js.config";
 import { logRequests } from "./middlewares/requestLogger";
 import { globalLimiterMiddleware } from "./middlewares/rateLimiter";
-
+import { routes } from "./routes/index";
 log4js.configure(log4jsConfig as Configuration);
 const app = express();
 
@@ -22,7 +22,7 @@ app.options("*", cors());
 app.use(globalLimiterMiddleware);
 
 // Use your router for the routes
-// app.use(router);
+routes(app);
 
 // Set up the logger
 const logger = log4js.getLogger();

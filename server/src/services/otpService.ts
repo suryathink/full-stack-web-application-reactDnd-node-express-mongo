@@ -1,4 +1,4 @@
-import OTPModel from "@src/models/otpModel";
+import OTPModel from "../models/otpModel";
 
 export class OTPService {
   public static async generateAndStoreOTP(email: string) {

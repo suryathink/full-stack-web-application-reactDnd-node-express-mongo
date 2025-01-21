@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { UserService } from "@src/services/userService";
-import { logApiError } from "@src/helpers/errorLogger";
+import { UserService } from "../services/userService";
+import { logApiError } from "../helpers/errorLogger";
 
 export class UserController {
   public static async signup(req: Request, res: Response): Promise<void> {

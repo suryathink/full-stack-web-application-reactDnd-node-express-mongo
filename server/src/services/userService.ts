@@ -3,7 +3,7 @@ import nodemailer, { SentMessageInfo } from "nodemailer";
 import log4js from "log4js";
 import { OTPService } from "./otpService";
 import User, { IUser } from "../models/user";
-import { generateToken } from "@src/helpers/jwthelper";
+import { generateToken } from "../helpers/jwthelper";
 
 const logger = log4js.getLogger();
 
