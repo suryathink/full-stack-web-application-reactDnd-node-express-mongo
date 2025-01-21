@@ -4,6 +4,7 @@ import log4js from "log4js";
 import { OTPService } from "./otpService";
 import User, { IUser } from "../models/user";
 import { generateToken } from "../helpers/jwthelper";
+import blacklistTokenData from "../models/blacklist";
 
 const logger = log4js.getLogger();
 
@@ -60,7 +61,7 @@ export class UserService {
     // Check if the email exists in the database
     const user = await User.findOne({ email }).lean();
     if (!user) {
-      console.log("User with this email does not exist");
+      logger.error("User with this email does not exist");
       return {
         isError: true,
         message: "User with this email does not exist",
@@ -70,41 +71,40 @@ export class UserService {
     // Generate and store OTP
     const otp = await OTPService.generateAndStoreOTP(email);
 
-    // Send the OTP to the user's email
+    // Configure the transporter for sending the email
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "singhsuryaprakash110@gmail.com",
+        user: process.env.EMAIL,
         pass: process.env.GOOGLE_PASSWORD,
       },
     });
 
     const mailOptions = {
-      from: "singhsuryaprakash110@gmail.com",
+      from: process.env.EMAIL,
       to: email,
       subject: "Password Reset OTP",
       text: `Your OTP for password reset is: ${otp}`,
     };
 
-    transporter.sendMail(
-      mailOptions,
-      (error: Error | null, info: SentMessageInfo) => {
-        if (error) {
-          logger.error("Error sending email:", error);
-          return {
-            isError: true,
-            message: "Failed to send OTP via email",
-          };
-        }
+    try {
+      // Await the sendMail result
+      const info: SentMessageInfo = await transporter.sendMail(mailOptions);
+      logger.info("Email sent successfully:", info.response);
 
-        logger.log("Email sent:", info.response);
-      }
-    );
+      return {
+        isError: false,
+        message: "OTP sent successfully",
+      };
+    } catch (error) {
+      // Handle errors while sending the email
+      logger.error("Error sending email:", error);
 
-    return {
-      isError: false,
-      message: "OTP sent successfully",
-    };
+      return {
+        isError: true,
+        message: "Failed to send OTP via email",
+      };
+    }
   }
 
   public static async resetPassword(
@@ -141,5 +141,9 @@ export class UserService {
       isError: false,
       message: "Password reset successfully",
     };
+  }
+
+  public static async addTokenToBlacklist(token: string) {
+    return await blacklistTokenData.create({ token });
   }
 }

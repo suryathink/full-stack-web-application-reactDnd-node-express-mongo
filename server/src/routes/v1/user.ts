@@ -1,7 +1,7 @@
 import express from "express";
 import { UserController } from "../../controllers/userController";
 import { authLimiterMiddleware } from "../../middlewares/rateLimiter";
-
+import verifyToken from "../../middlewares/auth";
 const router = express.Router();
 
 router.post("/signup", authLimiterMiddleware, UserController.signup);
@@ -16,5 +16,6 @@ router.post(
   authLimiterMiddleware,
   UserController.resetPassword
 );
+router.post("/logout", verifyToken, UserController.logout);
 
 export default router;

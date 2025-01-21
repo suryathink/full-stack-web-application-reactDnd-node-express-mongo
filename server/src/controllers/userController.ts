@@ -146,4 +146,22 @@ export class UserController {
       return;
     }
   }
+
+  public static async logout(req: Request, res: Response): Promise<void> {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+
+      await UserService.addTokenToBlacklist(token as string);
+
+      res.send({
+        message: "Logout Successful",
+      });
+    } catch (error) {
+      logApiError(req, error as Error);
+      res.status(500).send({
+        message: "Internal server error",
+      });
+      return;
+    }
+  }
 }

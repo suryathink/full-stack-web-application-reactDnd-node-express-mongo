@@ -1,34 +1,60 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import blacklistTokenData from "../models/blacklist";
 
-// Define a type for the decoded user object if needed (adjust this type based on your token payload)
+// Define a type for the decoded user object
 interface DecodedToken {
   userId: string;
   email: string;
-  // Add any other properties that are present in your JWT payload
+  // Add any other properties present in your JWT payload
 }
 
-const verifyToken =
-  () =>
-  (req: Request, res: Response, next: NextFunction): void => {
-    const token = req.headers.authorization?.split(" ")[1];
+// Extend the Request interface to include the user property
+declare global {
+  namespace Express {
+    interface Request {
+      user?: DecodedToken;
+    }
+  }
+}
 
-    if (!token) {
-      res.status(401).json({ message: "Unauthorized" });
+const verifyToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  const authHeader = req.headers.authorization;
+
+  // Ensure token exists and is properly formatted
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ message: "Unauthorized, token is missing" });
+    return;
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    // Check if the token is blacklisted
+    const blacklistedToken = await blacklistTokenData.findOne({ token });
+    if (blacklistedToken) {
+      res.status(401).json({ message: "Unauthorized, login again" });
       return;
     }
 
-    try {
-      const decodedInformation = jwt.verify(
-        token,
-        process.env.JWT_SECRET!
-      ) as DecodedToken;
-      req.user = decodedInformation; // Attach the decoded user information to the request object
-      next();
-    } catch (error) {
-      res.status(401).json({ message: "Invalid token" });
-      return;
-    }
-  };
+    // Verify the token
+    const decodedInformation = jwt.verify(
+      token,
+      process.env.JWT_SECRET!
+    ) as DecodedToken;
+
+    // Attach decoded user info to the request object
+    req.user = decodedInformation;
+
+    next();
+  } catch (error) {
+    // Handle invalid or expired token
+    res.status(401).json({ message: "Invalid or expired token" });
+  }
+};
 
 export default verifyToken;
