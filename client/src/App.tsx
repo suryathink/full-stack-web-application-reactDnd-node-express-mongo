@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-// import { AuthProvider } from "./context/AuthContext";
-import { AuthProvider } from "./components/context/AuthContext";
+import { useState } from "react";
 import Header from "./components/Header";
+import TaskBoard from "./components/tasks/TaskBoard";
 import LoginForm from "./components/auth/LoginForm";
 import RegisterForm from "./components/auth/RegisterForm";
 import ForgotPasswordForm from "./components/auth/ForgotPasswordForm";
+import { useAuth } from "./components/context/AuthContext";
 
 function App() {
   const [currentView, setCurrentView] = useState<
     "login" | "register" | "forgot-password"
   >("login");
 
-  const renderView = () => {
+  const renderAuthView = () => {
     switch (currentView) {
       case "register":
         return (
@@ -71,21 +71,25 @@ function App() {
     }
   };
 
+  const { isAuthenticated } = useAuth();
+
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-gray-100">
-        <Header />
-        <main className="flex flex-col items-center justify-center p-4 mt-8">
-          <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gray-100">
+      <Header />
+      <main className="container mx-auto px-4 py-8">
+        {isAuthenticated ? (
+          <TaskBoard />
+        ) : (
+          <div className="max-w-md mx-auto">
             <div className="text-center mb-8">
               <h1 className="text-4xl font-bold text-gray-800">Welcome</h1>
               <p className="text-gray-600 mt-2">Please sign in to continue</p>
             </div>
-            {renderView()}
+            {renderAuthView()}
           </div>
-        </main>
-      </div>
-    </AuthProvider>
+        )}
+      </main>
+    </div>
   );
 }
 
