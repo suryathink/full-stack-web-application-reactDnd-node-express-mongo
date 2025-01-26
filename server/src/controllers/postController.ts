@@ -5,7 +5,7 @@ export class PostController {
   // Create a new post
   public static async createPost(req: Request, res: Response) {
     try {
-      const userId = req.user!._id; // Assuming `req.user` is populated after authentication
+      const userId = req.user!._id;
       const { caption } = req.body;
       const imageUrl = req.file?.path; // Cloudinary URL for the uploaded imageUrl
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Camera, Send, Loader2 } from "lucide-react";
 import axios from "axios";
+import { formatDistanceToNow } from "date-fns";
 
 interface Post {
   id: string;
@@ -10,26 +11,37 @@ interface Post {
   timestamp: string;
 }
 
-// Mock data - replace with actual data from your backend
-const initialPosts: Post[] = [
-  {
-    id: "1",
-    imageUrl: "https://images.unsplash.com/photo-1469474968028-56623f02e42e",
-    caption: "Beautiful sunset at the mountains",
-    username: "nature_lover",
-    timestamp: "2h ago",
-  },
-  {
-    id: "2",
-    imageUrl: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
-    caption: "Breakfast of champions",
-    username: "foodie",
-    timestamp: "4h ago",
-  },
-];
+const fetchAndTransformPosts = async (): Promise<Post[]> => {
+  const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await axios.get(`${BACKEND_BASE_URL}/api/v1/post`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // Transform backend data to frontend Post format
+    const posts: Post[] = response.data.posts.map((post: any) => ({
+      id: post._id,
+      imageUrl: post.photoUrl,
+      caption: post.caption,
+      username: post.userId.name,
+      timestamp: formatDistanceToNow(new Date(post.createdAt), {
+        addSuffix: true,
+      }), // Converts timestamp to "x mins ago"
+    }));
+
+    return posts;
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw error;
+  }
+};
 
 const Feed = () => {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [newCaption, setNewCaption] = useState("");
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,22 +51,20 @@ const Feed = () => {
   const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
   const token = localStorage.getItem("token");
 
-  const fetchAllPosts = async () => {
-    try {
-      const posts = await axios.get(`${BACKEND_BASE_URL}/api/v1/post`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(posts.data);
-      return posts.data;
-    } catch (error) {
-      console.log("Error occured while fetching posts", error);
-    }
-  };
-
   useEffect(() => {
-    fetchAllPosts();
+    const loadPosts = async () => {
+      setIsLoading(true);
+      try {
+        const transformedPosts = await fetchAndTransformPosts();
+        setPosts(transformedPosts);
+      } catch (err) {
+        console.error("Failed to fetch posts:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPosts();
   }, []);
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -186,7 +196,7 @@ const Feed = () => {
       <div className="space-y-6">
         {posts.map((post) => (
           <div
-            key={post.id}
+            key={post.id ? post.id : Math.random()}
             className="bg-white rounded-lg shadow overflow-hidden"
           >
             <img
@@ -196,7 +206,14 @@ const Feed = () => {
             />
             <div className="p-4">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+                <div
+                  className="w-8 h-8 flex items-center justify-center rounded-full text-white font-bold"
+                  style={{
+                    backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
+                  }}
+                >
+                  {post?.username ? post?.username[0]?.toUpperCase() : "A"}
+                </div>
                 <span className="font-medium">{post.username}</span>
                 <span className="text-gray-500 text-sm ml-auto">
                   {post.timestamp}
