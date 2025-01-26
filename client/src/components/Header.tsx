@@ -1,9 +1,10 @@
 import React from "react";
 import { useAuth } from "./context/AuthContext";
 import { Menu, X, LogIn, UserPlus, LogOut, User } from "lucide-react";
+// import Feed from "./feeds/feed";
 
 interface HeaderProps {
-  onNavigate: (view: "login" | "register" | "forgot-password") => void;
+  onNavigate: (view: "login" | "register" | "forgot-password" | "feed") => void;
 }
 
 export default function Header({ onNavigate }: HeaderProps) {
@@ -18,6 +19,11 @@ export default function Header({ onNavigate }: HeaderProps) {
   };
 
   const getInitial = (name: string) => name.charAt(0).toUpperCase();
+
+  const handleFeedClick = () => {
+    onNavigate("feed");
+    setIsMenuOpen(false);
+  };
 
   return (
     <header className="bg-white shadow-md">
@@ -43,7 +49,10 @@ export default function Header({ onNavigate }: HeaderProps) {
                 <button className="text-gray-600 hover:text-gray-900">
                   Tasks
                 </button>
-                <button className="text-gray-600 hover:text-gray-900">
+                <button
+                  onClick={handleFeedClick}
+                  className="text-gray-600 hover:text-gray-900"
+                >
                   Feed
                 </button>
                 <div className="flex items-center space-x-4">
@@ -118,7 +127,7 @@ export default function Header({ onNavigate }: HeaderProps) {
                 </button>
                 <button
                   className="block px-2 py-2 text-gray-600 hover:text-gray-900 w-full text-left"
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={handleFeedClick}
                 >
                   Feed
                 </button>

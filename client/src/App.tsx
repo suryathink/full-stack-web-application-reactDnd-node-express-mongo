@@ -5,10 +5,11 @@ import TaskBoard from "./components/tasks/TaskBoard";
 import LoginForm from "./components/auth/LoginForm";
 import RegisterForm from "./components/auth/RegisterForm";
 import ForgotPasswordForm from "./components/auth/ForgotPasswordForm";
+import Feed from "./components/feeds/feed";
 
 function App() {
   const [currentView, setCurrentView] = useState<
-    "login" | "register" | "forgot-password"
+    "login" | "register" | "forgot-password" | "feed" | "tasks"
   >("login");
   const { isAuthenticated } = useAuth();
 
@@ -16,10 +17,15 @@ function App() {
     // Reset view to login when logging out
     if (!isAuthenticated) {
       setCurrentView("login");
+    } else {
+      // Set default view to tasks when authenticated
+      setCurrentView("tasks");
     }
   }, [isAuthenticated]);
 
-  const handleNavigate = (view: "login" | "register" | "forgot-password") => {
+  const handleNavigate = (
+    view: "login" | "register" | "forgot-password" | "feed" | "tasks"
+  ) => {
     setCurrentView(view);
   };
 
@@ -83,12 +89,21 @@ function App() {
     }
   };
 
+  const renderAuthenticatedView = () => {
+    switch (currentView) {
+      case "feed":
+        return <Feed />;
+      default:
+        return <TaskBoard />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Header onNavigate={handleNavigate} />
       <main className="container mx-auto px-4 py-8">
         {isAuthenticated ? (
-          <TaskBoard />
+          renderAuthenticatedView()
         ) : (
           <div className="max-w-md mx-auto">
             <div className="text-center mb-8">
