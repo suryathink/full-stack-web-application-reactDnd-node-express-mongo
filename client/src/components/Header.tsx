@@ -1,29 +1,22 @@
 import React from "react";
 import { useAuth } from "./context/AuthContext";
 import { Menu, X, LogIn, UserPlus, LogOut, User } from "lucide-react";
-// import Feed from "./feeds/feed";
+import { useNavigate, Link } from "react-router-dom";
 
-interface HeaderProps {
-  onNavigate: (view: "login" | "register" | "forgot-password" | "feed") => void;
-}
-
-export default function Header({ onNavigate }: HeaderProps) {
+export default function Header() {
   const { user, isAuthenticated, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleLogout = () => {
     logout();
     setIsMenuOpen(false);
+    navigate("/login");
   };
 
   const getInitial = (name: string) => name.charAt(0).toUpperCase();
-
-  const handleFeedClick = () => {
-    onNavigate("feed");
-    setIsMenuOpen(false);
-  };
 
   return (
     <header className="bg-white shadow-md">
@@ -31,30 +24,24 @@ export default function Header({ onNavigate }: HeaderProps) {
         <div className="flex justify-between h-16">
           {/* Logo and brand */}
           <div className="flex items-center">
-            <button
-              onClick={() => onNavigate("login")}
-              className="flex items-center space-x-2"
-            >
+            <Link to="/" className="flex items-center space-x-2">
               <User className="h-8 w-8 text-blue-500" />
               <span className="text-xl font-bold text-gray-800">
                 TaskMaster
               </span>
-            </button>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
             {isAuthenticated ? (
               <>
-                <button className="text-gray-600 hover:text-gray-900">
+                <Link to="/tasks" className="text-gray-600 hover:text-gray-900">
                   Tasks
-                </button>
-                <button
-                  onClick={handleFeedClick}
-                  className="text-gray-600 hover:text-gray-900"
-                >
+                </Link>
+                <Link to="/feed" className="text-gray-600 hover:text-gray-900">
                   Feed
-                </button>
+                </Link>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
@@ -73,20 +60,20 @@ export default function Header({ onNavigate }: HeaderProps) {
               </>
             ) : (
               <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => onNavigate("login")}
+                <Link
+                  to="/login"
                   className="flex items-center space-x-1 text-gray-600 hover:text-gray-900"
                 >
                   <LogIn className="h-5 w-5" />
                   <span>Login</span>
-                </button>
-                <button
-                  onClick={() => onNavigate("register")}
+                </Link>
+                <Link
+                  to="/register"
                   className="flex items-center space-x-1 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                 >
                   <UserPlus className="h-5 w-5" />
                   <span>Sign Up</span>
-                </button>
+                </Link>
               </div>
             )}
           </div>
@@ -119,18 +106,20 @@ export default function Header({ onNavigate }: HeaderProps) {
                     <span className="text-gray-700">{user?.name}</span>
                   </div>
                 </div>
-                <button
+                <Link
+                  to="/tasks"
                   className="block px-2 py-2 text-gray-600 hover:text-gray-900 w-full text-left"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Tasks
-                </button>
-                <button
+                </Link>
+                <Link
+                  to="/feed"
                   className="block px-2 py-2 text-gray-600 hover:text-gray-900 w-full text-left"
-                  onClick={handleFeedClick}
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Feed
-                </button>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="flex items-center space-x-1 px-2 py-2 text-gray-600 hover:text-gray-900 w-full"
@@ -141,26 +130,22 @@ export default function Header({ onNavigate }: HeaderProps) {
               </div>
             ) : (
               <div className="space-y-4 pt-4 border-t border-gray-200">
-                <button
-                  onClick={() => {
-                    onNavigate("login");
-                    setIsMenuOpen(false);
-                  }}
+                <Link
+                  to="/login"
                   className="flex items-center space-x-1 px-2 py-2 text-gray-600 hover:text-gray-900 w-full"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   <LogIn className="h-5 w-5" />
                   <span>Login</span>
-                </button>
-                <button
-                  onClick={() => {
-                    onNavigate("register");
-                    setIsMenuOpen(false);
-                  }}
+                </Link>
+                <Link
+                  to="/register"
                   className="flex items-center space-x-1 px-2 py-2 text-gray-600 hover:text-gray-900 w-full"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   <UserPlus className="h-5 w-5" />
                   <span>Sign Up</span>
-                </button>
+                </Link>
               </div>
             )}
           </div>

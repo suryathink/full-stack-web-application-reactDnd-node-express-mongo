@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Camera, Send, Loader2 } from "lucide-react";
+import axios from "axios";
 
 interface Post {
   id: string;
@@ -34,6 +35,28 @@ const Feed = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // api call to fetch all the posts uploaded by user
+  const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL;
+  const token = localStorage.getItem("token");
+
+  const fetchAllPosts = async () => {
+    try {
+      const posts = await axios.get(`${BACKEND_BASE_URL}/api/v1/post`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(posts.data);
+      return posts.data;
+    } catch (error) {
+      console.log("Error occured while fetching posts", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllPosts();
+  }, []);
+
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
@@ -49,28 +72,6 @@ const Feed = () => {
       }
       setSelectedImage(file);
       setError(null);
-    }
-  };
-
-  const uploadToCloudinary = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload image");
-      }
-
-      const data = await response.json();
-      return data.imageUrl;
-    } catch (error) {
-      console.error("Upload error:", error);
-      throw new Error("Failed to upload image");
     }
   };
 
@@ -90,27 +91,26 @@ const Feed = () => {
     setIsLoading(true);
     setError(null);
 
+    const formData = new FormData();
+    formData.append("photo", selectedImage);
+    formData.append("caption", newCaption);
+
     try {
-      // Upload image to Cloudinary
-      const imageUrl = await uploadToCloudinary(selectedImage);
+      const response = await axios.post(
+        `${BACKEND_BASE_URL}/api/v1/post`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      // Create new post
-      const response = await fetch("/api/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          imageUrl,
-          caption: newCaption,
-        }),
-      });
-
-      if (!response.ok) {
+      if (response.status !== 201) {
         throw new Error("Failed to create post");
       }
 
-      const newPost = await response.json();
+      const newPost = response.data;
       setPosts([newPost, ...posts]);
       setNewCaption("");
       setSelectedImage(null);

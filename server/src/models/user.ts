@@ -11,7 +11,6 @@ const UserSchema: Schema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
 });
-UserSchema.index({ email: 1 }, { unique: true });
 
 UserSchema.index({ name: 1 });
 

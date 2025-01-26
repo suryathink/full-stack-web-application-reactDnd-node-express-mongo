@@ -7,16 +7,16 @@ export class PostController {
     try {
       const userId = req.user!._id; // Assuming `req.user` is populated after authentication
       const { caption } = req.body;
-      const photoUrl = req.file?.path; // Cloudinary URL for the uploaded photo
+      const imageUrl = req.file?.path; // Cloudinary URL for the uploaded imageUrl
 
-      if (!photoUrl) {
+      if (!imageUrl) {
         res.status(400).json({ success: false, message: "Photo is required" });
       }
 
       const newPost = await PostService.createPost(
         userId,
         caption,
-        photoUrl as string
+        imageUrl as string
       );
 
       res.status(201).json({ success: true, post: newPost });
