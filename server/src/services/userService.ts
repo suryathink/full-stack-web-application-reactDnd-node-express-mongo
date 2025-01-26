@@ -5,7 +5,8 @@ import { OTPService } from "./otpService";
 import User, { IUser } from "../models/user";
 import { generateToken } from "../helpers/jwthelper";
 import blacklistTokenData from "../models/blacklist";
-
+import * as dotenv from "dotenv";
+dotenv.config();
 const logger = log4js.getLogger();
 
 export class UserService {

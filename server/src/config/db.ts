@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 import log4js from "log4js";
 dotenv.config();
 mongoose.set("strictQuery", true);
+dotenv.config();
+
 const logger = log4js.getLogger();
 const MONGO_URL = process.env.MONGO_URL!;
 

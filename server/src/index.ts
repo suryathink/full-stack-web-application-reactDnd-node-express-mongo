@@ -7,7 +7,9 @@ import { logRequests } from "./middlewares/requestLogger";
 import { globalLimiterMiddleware } from "./middlewares/rateLimiter";
 import { routes } from "./routes/index";
 log4js.configure(log4jsConfig as Configuration);
+import * as dotenv from "dotenv";
 const app = express();
+dotenv.config(); // Load environment variables from .env file
 
 const PORT = process.env.PORT;
 

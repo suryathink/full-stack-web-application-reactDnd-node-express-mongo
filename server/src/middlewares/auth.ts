@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import blacklistTokenData from "../models/blacklist";
-
+import * as dotenv from "dotenv";
+dotenv.config();
 // Define a type for the decoded user object
 interface DecodedToken {
   _id: string;

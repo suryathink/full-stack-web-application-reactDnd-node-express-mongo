@@ -1,5 +1,6 @@
 import { Configuration } from "log4js";
-
+import * as dotenv from "dotenv";
+dotenv.config();
 const DEFAULT_ERROR_LOG_LEVEL = process.env.DEFAULT_ERROR_LOG_LEVEL || "debug";
 const API_ERROR_LOG_LEVEL = process.env.API_ERROR_LOG_LEVEL || "debug";
 const SOCKET_ERROR_LOG_LEVEL = process.env.SOCKET_ERROR_LOG_LEVEL || "debug";
