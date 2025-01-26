@@ -9,6 +9,9 @@ import blacklistTokenData from "../models/blacklist";
 const logger = log4js.getLogger();
 
 export class UserService {
+  public static async isUserExists(userId: string) {
+    return await User.findOne({ _id: userId }).lean();
+  }
   public static async signup(name: string, email: string, password: string) {
     const alreadyExisting = await User.findOne({
       email,

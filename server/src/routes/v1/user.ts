@@ -4,6 +4,7 @@ import { authLimiterMiddleware } from "../../middlewares/rateLimiter";
 import verifyToken from "../../middlewares/auth";
 const router = express.Router();
 
+router.get("/validate-token", verifyToken, UserController.validateToken);
 router.post("/signup", authLimiterMiddleware, UserController.signup);
 router.post("/login", authLimiterMiddleware, UserController.login);
 router.post(

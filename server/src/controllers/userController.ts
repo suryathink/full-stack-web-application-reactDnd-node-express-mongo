@@ -43,6 +43,25 @@ export class UserController {
       return;
     }
   }
+  public static async validateToken(req: Request, res: Response) {
+    try {
+      const userId = req.user!._id;
+      const user = await UserService.isUserExists(userId);
+
+      if (!user) {
+        res.status(404).json({ success: false, message: "User not found" });
+        return;
+      }
+
+      res.status(200).json({ success: true, message: "Token is valid" });
+      return;
+    } catch (error) {
+      console.error(error);
+      res
+        .status(401)
+        .json({ success: false, message: "Invalid or expired token" });
+    }
+  }
 
   public static async forgotPassword(
     req: Request,

@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify"; // Import ToastContainer
-import "react-toastify/dist/ReactToastify.css"; // Import toast styles
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   AuthState,
   LoginCredentials,
@@ -23,6 +23,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user: null,
     isAuthenticated: false,
   });
+  const [isLoading, setIsLoading] = useState(true);
+
+  const validateToken = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `${BACKEND_BASE_URL}/api/v1/user/validate-token`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setAuthState({
+          user: response.data.data,
+          isAuthenticated: true,
+        });
+      } else {
+        localStorage.removeItem("token");
+        setAuthState({
+          user: null,
+          isAuthenticated: false,
+        });
+      }
+    } catch (error) {
+      console.error("Token validation error:", error);
+      localStorage.removeItem("token");
+      setAuthState({
+        user: null,
+        isAuthenticated: false,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    validateToken();
+  }, []);
 
   const login = async (credentials: LoginCredentials) => {
     try {
@@ -36,18 +83,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (response.status !== 200) throw new Error("Login failed");
 
-      const user = response.data;
-      console.log("user logged in ", user);
-      console.log("token", user.data.token);
-      localStorage.setItem("token", user.data.token);
-      setAuthState({ user, isAuthenticated: true });
-      // Show success toast for successful login
+      const { data } = response.data;
+      localStorage.setItem("token", data.token);
+      setAuthState({
+        user: data.user,
+        isAuthenticated: true,
+      });
       toast.success("Login successful! Welcome back.");
     } catch (error: any) {
       console.error("Login error:", error);
       toast.error(
         `Login failed: ${error?.response?.data?.message || error.message}`
       );
+      throw error;
     }
   };
 
@@ -63,11 +111,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (response.status !== 200) throw new Error("Registration failed");
 
-      const user = response.data.data;
-      console.log("user", user);
-      setAuthState({ user, isAuthenticated: true });
-
-      // Show success toast for successful registration
+      const { data } = response.data;
+      setAuthState({
+        user: data.user,
+        isAuthenticated: true,
+      });
       toast.success("User successfully created! Please log in.");
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -76,13 +124,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           error?.response?.data?.message || error.message
         }`
       );
+      throw error;
     }
   };
 
   const logout = () => {
-    setAuthState({ user: null, isAuthenticated: false });
-    // TODO API call to log out
     localStorage.removeItem("token");
+    setAuthState({ user: null, isAuthenticated: false });
+    toast.info("You have been logged out.");
   };
 
   const resetPassword = async (email: string) => {
@@ -96,9 +145,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       );
 
       if (response.status !== 200) throw new Error("Password reset failed");
-
-      // Optionally show a success message after password reset
-      toast.success("Password reset successful. Please check your email.");
+      toast.success(
+        "Password reset instructions have been sent to your email."
+      );
     } catch (error: any) {
       console.error("Password reset error:", error);
       toast.error(
@@ -106,15 +155,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           error?.response?.data?.message || error.message
         }`
       );
+      throw error;
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider
       value={{ ...authState, login, register, logout, resetPassword }}
     >
       {children}
-      <ToastContainer /> {/* Render the ToastContainer component */}
+      <ToastContainer />
     </AuthContext.Provider>
   );
 }

@@ -28,7 +28,9 @@ const verifyToken = async (
 
   // Ensure token exists and is properly formatted
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).json({ message: "Unauthorized, token is missing" });
+    res
+      .status(401)
+      .json({ success: false, message: "Unauthorized, token is missing" });
     return;
   }
 
@@ -38,7 +40,9 @@ const verifyToken = async (
     // Check if the token is blacklisted
     const blacklistedToken = await blacklistTokenData.findOne({ token });
     if (blacklistedToken) {
-      res.status(401).json({ message: "Unauthorized, login again" });
+      res
+        .status(401)
+        .json({ success: false, message: "Unauthorized, login again" });
       return;
     }
 
@@ -54,7 +58,9 @@ const verifyToken = async (
     next();
   } catch (error) {
     // Handle invalid or expired token
-    res.status(401).json({ message: "Invalid or expired token" });
+    res
+      .status(401)
+      .json({ success: false, message: "Invalid or expired token" });
   }
 };
 

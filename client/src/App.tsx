@@ -1,21 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "./components/context/AuthContext";
 import Header from "./components/Header";
 import TaskBoard from "./components/tasks/TaskBoard";
 import LoginForm from "./components/auth/LoginForm";
 import RegisterForm from "./components/auth/RegisterForm";
 import ForgotPasswordForm from "./components/auth/ForgotPasswordForm";
-import { useAuth } from "./components/context/AuthContext";
 
 function App() {
   const [currentView, setCurrentView] = useState<
     "login" | "register" | "forgot-password"
   >("login");
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    // Reset view to login when logging out
+    if (!isAuthenticated) {
+      setCurrentView("login");
+    }
+  }, [isAuthenticated]);
 
   const renderAuthView = () => {
     switch (currentView) {
       case "register":
         return (
-          <>
+          <div>
             <RegisterForm />
             <p className="text-center text-gray-600">
               Already have an account?{" "}
@@ -26,7 +34,7 @@ function App() {
                 Login
               </button>
             </p>
-          </>
+          </div>
         );
       case "forgot-password":
         return (
@@ -70,8 +78,6 @@ function App() {
         );
     }
   };
-
-  const { isAuthenticated } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-100">
