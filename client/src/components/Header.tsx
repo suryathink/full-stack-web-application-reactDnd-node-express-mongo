@@ -1,8 +1,12 @@
 import React from "react";
-import { useAuth } from "../components/context/AuthContext";
+import { useAuth } from "./context/AuthContext";
 import { Menu, X, LogIn, UserPlus, LogOut, User } from "lucide-react";
 
-export default function Header() {
+interface HeaderProps {
+  onNavigate: (view: "login" | "register" | "forgot-password") => void;
+}
+
+export default function Header({ onNavigate }: HeaderProps) {
   const { user, isAuthenticated, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -21,24 +25,27 @@ export default function Header() {
         <div className="flex justify-between h-16">
           {/* Logo and brand */}
           <div className="flex items-center">
-            <a href="/" className="flex items-center space-x-2">
+            <button
+              onClick={() => onNavigate("login")}
+              className="flex items-center space-x-2"
+            >
               <User className="h-8 w-8 text-blue-500" />
               <span className="text-xl font-bold text-gray-800">
                 TaskMaster
               </span>
-            </a>
+            </button>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden sm:flex sm:items-center sm:space-x-8">
             {isAuthenticated ? (
               <>
-                <a href="/tasks" className="text-gray-600 hover:text-gray-900">
+                <button className="text-gray-600 hover:text-gray-900">
                   Tasks
-                </a>
-                <a href="/feed" className="text-gray-600 hover:text-gray-900">
+                </button>
+                <button className="text-gray-600 hover:text-gray-900">
                   Feed
-                </a>
+                </button>
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
@@ -57,20 +64,20 @@ export default function Header() {
               </>
             ) : (
               <div className="flex items-center space-x-4">
-                <a
-                  href="/login"
+                <button
+                  onClick={() => onNavigate("login")}
                   className="flex items-center space-x-1 text-gray-600 hover:text-gray-900"
                 >
                   <LogIn className="h-5 w-5" />
                   <span>Login</span>
-                </a>
-                <a
-                  href="/register"
+                </button>
+                <button
+                  onClick={() => onNavigate("register")}
                   className="flex items-center space-x-1 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                 >
                   <UserPlus className="h-5 w-5" />
                   <span>Sign Up</span>
-                </a>
+                </button>
               </div>
             )}
           </div>
@@ -103,23 +110,21 @@ export default function Header() {
                     <span className="text-gray-700">{user?.name}</span>
                   </div>
                 </div>
-                <a
-                  href="/tasks"
-                  className="block px-2 py-2 text-gray-600 hover:text-gray-900"
+                <button
+                  className="block px-2 py-2 text-gray-600 hover:text-gray-900 w-full text-left"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Tasks
-                </a>
-                <a
-                  href="/feed"
-                  className="block px-2 py-2 text-gray-600 hover:text-gray-900"
+                </button>
+                <button
+                  className="block px-2 py-2 text-gray-600 hover:text-gray-900 w-full text-left"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Feed
-                </a>
+                </button>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center space-x-1 px-2 py-2 text-gray-600 hover:text-gray-900"
+                  className="flex items-center space-x-1 px-2 py-2 text-gray-600 hover:text-gray-900 w-full"
                 >
                   <LogOut className="h-5 w-5" />
                   <span>Logout</span>
@@ -127,22 +132,26 @@ export default function Header() {
               </div>
             ) : (
               <div className="space-y-4 pt-4 border-t border-gray-200">
-                <a
-                  href="/login"
-                  className="flex items-center space-x-1 px-2 py-2 text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMenuOpen(false)}
+                <button
+                  onClick={() => {
+                    onNavigate("login");
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-1 px-2 py-2 text-gray-600 hover:text-gray-900 w-full"
                 >
                   <LogIn className="h-5 w-5" />
                   <span>Login</span>
-                </a>
-                <a
-                  href="/register"
-                  className="flex items-center space-x-1 px-2 py-2 text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMenuOpen(false)}
+                </button>
+                <button
+                  onClick={() => {
+                    onNavigate("register");
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center space-x-1 px-2 py-2 text-gray-600 hover:text-gray-900 w-full"
                 >
                   <UserPlus className="h-5 w-5" />
                   <span>Sign Up</span>
-                </a>
+                </button>
               </div>
             )}
           </div>

@@ -19,11 +19,15 @@ function App() {
     }
   }, [isAuthenticated]);
 
+  const handleNavigate = (view: "login" | "register" | "forgot-password") => {
+    setCurrentView(view);
+  };
+
   const renderAuthView = () => {
     switch (currentView) {
       case "register":
         return (
-          <div>
+          <>
             <RegisterForm />
             <p className="text-center text-gray-600">
               Already have an account?{" "}
@@ -34,7 +38,7 @@ function App() {
                 Login
               </button>
             </p>
-          </div>
+          </>
         );
       case "forgot-password":
         return (
@@ -81,7 +85,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Header />
+      <Header onNavigate={handleNavigate} />
       <main className="container mx-auto px-4 py-8">
         {isAuthenticated ? (
           <TaskBoard />
