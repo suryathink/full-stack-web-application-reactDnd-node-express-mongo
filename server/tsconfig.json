@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "types": ["node", "dotenv"],
+    "types": ["node"],
 
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
