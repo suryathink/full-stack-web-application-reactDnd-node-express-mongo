@@ -3,7 +3,7 @@ import type { Task, TaskStatus } from "../types/task";
 import TaskCard from "./TaskCard";
 
 interface TaskColumnProps {
-  title: string;
+  name: string;
   status: TaskStatus;
   tasks: Task[];
   onTaskMove: (taskId: string, newStatus: TaskStatus) => void;
@@ -11,7 +11,7 @@ interface TaskColumnProps {
 }
 
 export default function TaskColumn({
-  title,
+  name,
   status,
   tasks,
   onTaskMove,
@@ -21,7 +21,7 @@ export default function TaskColumn({
     accept: "TASK",
     drop: (item: Task) => {
       if (item.status !== status) {
-        onTaskMove(item.id, status); // Move the task to the new status
+        onTaskMove(item._id, status); // Move the task to the new status
       }
     },
     collect: (monitor) => ({
@@ -36,10 +36,10 @@ export default function TaskColumn({
         isOver ? "bg-blue-50" : ""
       }`}
     >
-      <h2 className="text-xl font-bold mb-4 text-gray-800">{title}</h2>
+      <h2 className="text-xl font-bold mb-4 text-gray-800">{name}</h2>
       <div className="space-y-4">
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} onDelete={onDeleteTask} />
+          <TaskCard key={task._id} task={task} onDelete={onDeleteTask} />
         ))}
       </div>
     </div>

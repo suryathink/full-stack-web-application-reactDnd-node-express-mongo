@@ -4,7 +4,7 @@ export interface ITask extends Document {
   userId: mongoose.Types.ObjectId;
   name: string;
   description: string;
-  status: "Pending" | "Completed" | "Done";
+  status: "pending" | "completed" | "done";
 }
 
 const TaskSchema: Schema = new Schema(
@@ -18,8 +18,8 @@ const TaskSchema: Schema = new Schema(
     description: { type: String, required: true },
     status: {
       type: String,
-      enum: ["Pending", "Completed", "Done"],
-      default: "Pending",
+      enum: ["pending", "completed", "done"],
+      default: "pending",
     },
   },
   { timestamps: true }

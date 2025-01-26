@@ -1,8 +1,8 @@
 export type TaskStatus = "pending" | "completed" | "done";
 
 export interface Task {
-  id: string;
-  title: string;
+  _id: string;
+  name: string;
   description: string;
   status: TaskStatus;
 }

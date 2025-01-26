@@ -18,7 +18,7 @@ export default function TaskCard({ task, onDelete }: TaskCardProps) {
 
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete this task?")) {
-      onDelete(task.id);
+      onDelete(task._id);
     }
   };
 
@@ -30,7 +30,7 @@ export default function TaskCard({ task, onDelete }: TaskCardProps) {
       }`}
     >
       <div className="flex justify-between items-start mb-2">
-        <h3 className="text-lg font-semibold text-gray-800">{task.title}</h3>
+        <h3 className="text-lg font-semibold text-gray-800">{task.name}</h3>
         <button
           onClick={handleDelete}
           className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition-colors"

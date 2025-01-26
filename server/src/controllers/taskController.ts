@@ -22,8 +22,9 @@ export class TaskController {
   public static async getTasks(req: Request, res: Response) {
     try {
       const userId = req.user!._id as string; // Assuming user is attached to the request after authentication
+      const { status } = req.query || ""; // Get the 'status' query parameter
 
-      const tasks = await TaskService.getTasksByUser(userId);
+      const tasks = await TaskService.getTasksByUser(userId, status as string);
       res.status(200).json({ success: true, tasks });
     } catch (error) {
       console.error(error);

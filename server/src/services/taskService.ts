@@ -1,30 +1,37 @@
 import Task, { ITask } from "../models/task";
 
 export class TaskService {
-  // Create a new task
   public static async createTask(
     userId: string,
     name: string,
     description: string
   ): Promise<ITask> {
-    return Task.create({ userId, name, description });
+    return await Task.create({ userId, name, description });
   }
 
-  // Get all tasks for a user
-  public static async getTasksByUser(userId: string): Promise<ITask[]> {
-    return Task.find({ userId });
+  public static async getTasksByUser(
+    userId: string,
+    status?: string
+  ): Promise<ITask[]> {
+    const query: any = { userId };
+
+    if (status) {
+      query.status = status;
+    }
+
+    return await Task.find(query)
+      .select("-createdAt -userId -updatedAt -__v")
+      .lean();
   }
 
-  // Update the status of a task
   public static async updateTaskStatus(
     taskId: string,
-    status: "Pending" | "Completed" | "Done"
+    status: "pending" | "completed" | "done"
   ): Promise<ITask | null> {
-    return Task.findByIdAndUpdate(taskId, { status }, { new: true });
+    return await Task.findByIdAndUpdate(taskId, { status }, { new: true });
   }
 
-  // Delete a task by ID
   public static async deleteTask(taskId: string): Promise<ITask | null> {
-    return Task.findByIdAndDelete(taskId);
+    return await Task.findByIdAndDelete(taskId);
   }
 }

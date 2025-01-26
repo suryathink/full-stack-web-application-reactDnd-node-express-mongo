@@ -2,18 +2,18 @@ import React, { useState } from "react";
 import { PlusCircle } from "lucide-react";
 
 interface TaskFormProps {
-  onAddTask: (title: string, description: string) => void;
+  onAddTask: (name: string, description: string) => void;
 }
 
 export default function TaskForm({ onAddTask }: TaskFormProps) {
-  const [title, setTitle] = useState("");
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (title.trim() && description.trim()) {
-      onAddTask(title, description);
-      setTitle("");
+    if (name.trim() && description.trim()) {
+      onAddTask(name, description);
+      setName("");
       setDescription("");
     }
   };
@@ -35,8 +35,8 @@ export default function TaskForm({ onAddTask }: TaskFormProps) {
           <input
             type="text"
             id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter task title"
             required

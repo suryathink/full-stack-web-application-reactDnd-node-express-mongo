@@ -37,6 +37,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (response.status !== 200) throw new Error("Login failed");
 
       const user = response.data;
+      console.log("user logged in ", user);
+      console.log("token", user.data.token);
+      localStorage.setItem("token", user.data.token);
       setAuthState({ user, isAuthenticated: true });
       // Show success toast for successful login
       toast.success("Login successful! Welcome back.");
@@ -79,6 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     setAuthState({ user: null, isAuthenticated: false });
     // TODO API call to log out
+    localStorage.removeItem("token");
   };
 
   const resetPassword = async (email: string) => {
