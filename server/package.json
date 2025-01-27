@@ -3,26 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "ts-node build.ts",
-    "lint": "npx eslint --ext .ts src/",
-    "lint:tests": "npx eslint --ext .ts spec/",
-    "start": "node -r module-alias/register ./dist --env=production",
-    "dev": "nodemon",
-    "test": "nodemon --config ./spec/nodemon.json",
-    "test:no-reloading": "npx ts-node --files -r tsconfig-paths/register ./spec"
-  },
-  "nodemonConfig": {
-    "watch": [
-      "src"
-    ],
-    "ext": "ts, html",
-    "ignore": [
-      "src/public"
-    ],
-    "exec": "./node_modules/.bin/ts-node --files -r tsconfig-paths/register ./src"
-  },
-  "_moduleAliases": {
-    "@src": "dist"
+    "start": "node dist/index.js",
+    "start:dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

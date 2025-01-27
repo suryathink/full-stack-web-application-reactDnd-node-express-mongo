@@ -25,3 +25,4 @@ build/
 config.json
 config.local.json
 .env*
+.vercel
