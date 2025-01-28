@@ -16,7 +16,7 @@ const fetchAndTransformPosts = async (): Promise<Post[]> => {
   const token = localStorage.getItem("token");
 
   try {
-    const response = await axios.get(`${BACKEND_BASE_URL}/api/v1/post`, {
+    const response = await axios.get(`${BACKEND_BASE_URL}api/v1/post`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -107,7 +107,7 @@ const Feed = () => {
 
     try {
       const response = await axios.post(
-        `${BACKEND_BASE_URL}/api/v1/post`,
+        `${BACKEND_BASE_URL}api/v1/post`,
         formData,
         {
           headers: {

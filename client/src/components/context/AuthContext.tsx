@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const response = await axios.get(
-        `${BACKEND_BASE_URL}/api/v1/user/validate-token`,
+        `${BACKEND_BASE_URL}api/v1/user/validate-token`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (credentials: LoginCredentials) => {
     try {
       const response = await axios.post(
-        `${BACKEND_BASE_URL}/api/v1/user/login`,
+        `${BACKEND_BASE_URL}api/v1/user/login`,
         credentials,
         {
           headers: { "Content-Type": "application/json" },
@@ -102,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (credentials: RegisterCredentials) => {
     try {
       const response = await axios.post(
-        `${BACKEND_BASE_URL}/api/v1/user/signup`,
+        `${BACKEND_BASE_URL}api/v1/user/signup`,
         credentials,
         {
           headers: { "Content-Type": "application/json" },
@@ -137,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resetPassword = async (email: string) => {
     try {
       const response = await axios.post(
-        `${BACKEND_BASE_URL}/api/v1/user/reset-password`,
+        `${BACKEND_BASE_URL}api/v1/user/reset-password`,
         { email },
         {
           headers: { "Content-Type": "application/json" },
